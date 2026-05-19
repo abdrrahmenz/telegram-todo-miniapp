@@ -3,49 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📝 Todo Mini App</title>
+  <title>KedekuStore</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app">
+
     <!-- Header -->
     <div class="header">
-      <h1>📝 Todo List</h1>
+      <div class="header-top">
+        <h1>🛒 KedekuStore</h1>
+        <button class="cart-btn" onclick="toggleCart()">
+          🛍️ <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+      </div>
       <p class="user-info" id="userInfo">Loading...</p>
     </div>
 
-    <!-- Input Form -->
-    <div class="input-area">
-      <input 
-        type="text" 
-        id="todoInput" 
-        placeholder="Tambah todo baru..." 
-        maxlength="100"
-      />
-      <button id="addBtn" onclick="addTodo()">➕</button>
+    <!-- Search -->
+    <div class="search-area">
+      <input type="text" id="searchInput" placeholder="🔍 Cari produk..." oninput="filterProducts()">
     </div>
 
-    <!-- Filter Tabs -->
-    <div class="tabs">
-      <button class="tab active" data-filter="all" onclick="setFilter('all')">Semua</button>
-      <button class="tab" data-filter="active" onclick="setFilter('active')">Aktif</button>
-      <button class="tab" data-filter="done" onclick="setFilter('done')">Selesai</button>
+    <!-- Category Tabs -->
+    <div class="tabs" id="categoryTabs">
+      <button class="tab active" data-cat="all" onclick="setCategory('all')">Semua</button>
+      <button class="tab" data-cat="pulsa" onclick="setCategory('pulsa')">📱 Pulsa</button>
+      <button class="tab" data-cat="token" onclick="setCategory('token')">⚡ Token Listrik</button>
+      <button class="tab" data-cat="paket" onclick="setCategory('paket')">📦 Paket Data</button>
+      <button class="tab" data-cat="barang" onclick="setCategory('barang')">🎮 Barang</button>
     </div>
 
-    <!-- Todo List -->
-    <ul class="todo-list" id="todoList">
-      <!-- Todos will be rendered here -->
-    </ul>
+    <!-- Product Grid -->
+    <div class="product-grid" id="productGrid">
+      <!-- Rendered by JS -->
+    </div>
 
     <!-- Empty State -->
-    <div class="empty-state" id="emptyState">
-      <span class="empty-icon">📭</span>
-      <p>Belum ada todo. Tambah yang baru!</p>
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <span class="empty-icon">🔍</span>
+      <p>Produk tidak ditemukan</p>
     </div>
 
-    <!-- Counter -->
-    <div class="counter" id="counter"></div>
+    <!-- Cart Sidebar -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+      <div class="cart-header">
+        <h2>🛍️ Keranjang</h2>
+        <button class="close-btn" onclick="toggleCart()">✕</button>
+      </div>
+      <div class="cart-items" id="cartItems">
+        <!-- Rendered by JS -->
+      </div>
+      <div class="cart-empty" id="cartEmpty">
+        <span>📭</span>
+        <p>Keranjang kosong</p>
+      </div>
+      <div class="cart-footer" id="cartFooter" style="display:none;">
+        <div class="cart-total">
+          <span>Total</span>
+          <span class="total-price" id="totalPrice">Rp 0</span>
+        </div>
+        <button class="checkout-btn" onclick="checkout()">💰 Pesan via Telegram</button>
+      </div>
+    </div>
+
+    <!-- Order Modal (Input nomor) -->
+    <div class="modal-overlay" id="orderModal" style="display:none;">
+      <div class="modal">
+        <h2>📝 Konfirmasi Pesanan</h2>
+        <div class="modal-body">
+          <label for="nomorInput">Nomor HP / ID Pelanggan:</label>
+          <input type="text" id="nomorInput" placeholder="08xxxxxxxxxx">
+          <div class="order-summary" id="orderSummary"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeModal()">Batal</button>
+          <button class="btn-confirm" onclick="confirmOrder()">✅ Kirim Pesanan</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal-overlay" id="successModal" style="display:none;">
+      <div class="modal success-modal">
+        <span class="success-icon">✅</span>
+        <h2>Pesanan Terkirim!</h2>
+        <p>Pesanan kamu sudah dikirim ke admin. Tunggu konfirmasi ya! 🙏</p>
+        <button class="btn-confirm" onclick="closeSuccess()">OK</button>
+      </div>
+    </div>
+
   </div>
 
   <script src="app.js"></script>
