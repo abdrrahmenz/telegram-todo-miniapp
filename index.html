@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 Todo Mini App</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <div class="header">
+      <h1>📝 Todo List</h1>
+      <p class="user-info" id="userInfo">Loading...</p>
+    </div>
+
+    <!-- Input Form -->
+    <div class="input-area">
+      <input 
+        type="text" 
+        id="todoInput" 
+        placeholder="Tambah todo baru..." 
+        maxlength="100"
+      />
+      <button id="addBtn" onclick="addTodo()">➕</button>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="tabs">
+      <button class="tab active" data-filter="all" onclick="setFilter('all')">Semua</button>
+      <button class="tab" data-filter="active" onclick="setFilter('active')">Aktif</button>
+      <button class="tab" data-filter="done" onclick="setFilter('done')">Selesai</button>
+    </div>
+
+    <!-- Todo List -->
+    <ul class="todo-list" id="todoList">
+      <!-- Todos will be rendered here -->
+    </ul>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState">
+      <span class="empty-icon">📭</span>
+      <p>Belum ada todo. Tambah yang baru!</p>
+    </div>
+
+    <!-- Counter -->
+    <div class="counter" id="counter"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

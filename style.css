@@ -1,0 +1,209 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--tg-theme-bg-color, #1a1a2e);
+  color: var(--tg-theme-text-color, #ffffff);
+  min-height: 100vh;
+  padding: 16px;
+}
+
+.app {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--tg-theme-secondary-bg-color, #16213e);
+  border-radius: 16px;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 4px;
+  color: var(--tg-theme-text-color, #ffffff);
+}
+
+.user-info {
+  font-size: 13px;
+  color: var(--tg-theme-hint-color, #888);
+}
+
+/* Input Area */
+.input-area {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--tg-theme-hint-color, #333);
+  border-radius: 12px;
+  background: var(--tg-theme-secondary-bg-color, #16213e);
+  color: var(--tg-theme-text-color, #ffffff);
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-area input:focus {
+  border-color: var(--tg-theme-button-color, #6c5ce7);
+}
+
+.input-area input::placeholder {
+  color: var(--tg-theme-hint-color, #666);
+}
+
+.input-area button {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: var(--tg-theme-button-color, #6c5ce7);
+  color: var(--tg-theme-button-text-color, #ffffff);
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.input-area button:active {
+  transform: scale(0.92);
+}
+
+/* Filter Tabs */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: 2px solid var(--tg-theme-hint-color, #333);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--tg-theme-text-color, #ffffff);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab.active {
+  background: var(--tg-theme-button-color, #6c5ce7);
+  border-color: var(--tg-theme-button-color, #6c5ce7);
+  color: var(--tg-theme-button-text-color, #ffffff);
+}
+
+/* Todo List */
+.todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--tg-theme-secondary-bg-color, #16213e);
+  border-radius: 12px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.todo-item .checkbox {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--tg-theme-button-color, #6c5ce7);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.todo-item .checkbox:hover {
+  background: rgba(108, 92, 231, 0.2);
+}
+
+.todo-item.done .checkbox {
+  background: #2ecc71;
+  border-color: #2ecc71;
+}
+
+.todo-item.done .checkbox::after {
+  content: '✓';
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.todo-item .text {
+  flex: 1;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.todo-item.done .text {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.todo-item .delete-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 77, 77, 0.15);
+  color: #ff4d4d;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.todo-item .delete-btn:hover {
+  background: rgba(255, 77, 77, 0.3);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--tg-theme-hint-color, #666);
+}
+
+.empty-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+/* Counter */
+.counter {
+  text-align: center;
+  font-size: 13px;
+  color: var(--tg-theme-hint-color, #666);
+  padding: 8px;
+}
