@@ -2,96 +2,217 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>KedekuStore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app">
 
-    <!-- Header -->
-    <div class="header">
-      <div class="header-top">
-        <h1>🛒 KedekuStore</h1>
-        <button class="cart-btn" onclick="toggleCart()">
-          🛍️ <span class="cart-badge" id="cartBadge">0</span>
+    <!-- ========== STORE TAB ========== -->
+    <div class="tab-content active" id="tabStore">
+
+      <!-- Header -->
+      <div class="header">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">KedekuStore</h1>
+            <p class="user-greeting" id="userGreeting">Selamat datang! 👋</p>
+          </div>
+          <button class="cart-btn" id="cartBtn" onclick="toggleCart()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <span class="cart-badge" id="cartBadge">0</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <div class="search-box">
+          <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="searchInput" placeholder="Cari produk..." oninput="filterProducts()">
+        </div>
+      </div>
+
+      <!-- Category Pills -->
+      <div class="category-scroll">
+        <button class="cat-pill active" data-cat="all" onclick="setCategory('all')">
+          <span class="cat-emoji">🏪</span> Semua
+        </button>
+        <button class="cat-pill" data-cat="pulsa" onclick="setCategory('pulsa')">
+          <span class="cat-emoji">📱</span> Pulsa
+        </button>
+        <button class="cat-pill" data-cat="token" onclick="setCategory('token')">
+          <span class="cat-emoji">⚡</span> Token
+        </button>
+        <button class="cat-pill" data-cat="paket" onclick="setCategory('paket')">
+          <span class="cat-emoji">📦</span> Paket Data
+        </button>
+        <button class="cat-pill" data-cat="barang" onclick="setCategory('barang')">
+          <span class="cat-emoji">🎮</span> Voucher
         </button>
       </div>
-      <p class="user-info" id="userInfo">Loading...</p>
-    </div>
 
-    <!-- Search -->
-    <div class="search-area">
-      <input type="text" id="searchInput" placeholder="🔍 Cari produk..." oninput="filterProducts()">
-    </div>
+      <!-- Product Grid -->
+      <div class="product-grid" id="productGrid"></div>
 
-    <!-- Category Tabs -->
-    <div class="tabs" id="categoryTabs">
-      <button class="tab active" data-cat="all" onclick="setCategory('all')">Semua</button>
-      <button class="tab" data-cat="pulsa" onclick="setCategory('pulsa')">📱 Pulsa</button>
-      <button class="tab" data-cat="token" onclick="setCategory('token')">⚡ Token Listrik</button>
-      <button class="tab" data-cat="paket" onclick="setCategory('paket')">📦 Paket Data</button>
-      <button class="tab" data-cat="barang" onclick="setCategory('barang')">🎮 Barang</button>
-    </div>
-
-    <!-- Product Grid -->
-    <div class="product-grid" id="productGrid">
-      <!-- Rendered by JS -->
-    </div>
-
-    <!-- Empty State -->
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <span class="empty-icon">🔍</span>
-      <p>Produk tidak ditemukan</p>
-    </div>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
-    <div class="cart-sidebar" id="cartSidebar">
-      <div class="cart-header">
-        <h2>🛍️ Keranjang</h2>
-        <button class="close-btn" onclick="toggleCart()">✕</button>
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-illustration">🔍</div>
+        <p>Produk tidak ditemukan</p>
+        <span>Coba kata kunci lain</span>
       </div>
-      <div class="cart-items" id="cartItems">
+    </div>
+
+    <!-- ========== HISTORY TAB ========== -->
+    <div class="tab-content" id="tabHistory">
+      <div class="page-header">
+        <h1>Riwayat Pesanan</h1>
+        <p class="page-subtitle">Pesanan yang pernah kamu buat</p>
+      </div>
+
+      <div class="history-list" id="historyList">
         <!-- Rendered by JS -->
       </div>
+
+      <div class="empty-state" id="historyEmpty">
+        <div class="empty-illustration">📋</div>
+        <p>Belum ada pesanan</p>
+        <span>Pesanan kamu akan muncul di sini</span>
+      </div>
+    </div>
+
+    <!-- ========== PROFILE TAB ========== -->
+    <div class="tab-content" id="tabProfile">
+      <div class="profile-card">
+        <div class="profile-avatar" id="profileAvatar">👤</div>
+        <h2 class="profile-name" id="profileName">User</h2>
+        <p class="profile-id" id="profileId">Loading...</p>
+      </div>
+
+      <div class="profile-stats">
+        <div class="stat-card">
+          <div class="stat-value" id="statOrders">0</div>
+          <div class="stat-label">Pesanan</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="statSpent">Rp 0</div>
+          <div class="stat-label">Total Belanja</div>
+        </div>
+      </div>
+
+      <div class="profile-menu">
+        <div class="menu-item" onclick="clearHistory()">
+          <div class="menu-icon">🗑️</div>
+          <span>Hapus Riwayat</span>
+          <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item" onclick="clearCart()">
+          <div class="menu-icon">🛒</div>
+          <span>Kosongkan Keranjang</span>
+          <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="menu-item" onclick="showAbout()">
+          <div class="menu-icon">ℹ️</div>
+          <span>Tentang Aplikasi</span>
+          <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+
+      <div class="app-version">KedekuStore v2.0</div>
+    </div>
+
+    <!-- ========== BOTTOM NAV ========== -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="Store" onclick="switchTab('Store')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Store</span>
+      </button>
+      <button class="nav-item" data-tab="History" onclick="switchTab('History')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Riwayat</span>
+      </button>
+      <button class="nav-item" data-tab="Profile" onclick="switchTab('Profile')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Profil</span>
+      </button>
+    </nav>
+
+    <!-- ========== CART SLIDE-UP ========== -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sheet" id="cartSheet">
+      <div class="sheet-handle"></div>
+      <div class="cart-header">
+        <h2>Keranjang Belanja</h2>
+        <span class="cart-count" id="cartCount">0 item</span>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
       <div class="cart-empty" id="cartEmpty">
-        <span>📭</span>
-        <p>Keranjang kosong</p>
+        <div class="empty-illustration" style="font-size:40px;">🛒</div>
+        <p>Keranjang masih kosong</p>
       </div>
       <div class="cart-footer" id="cartFooter" style="display:none;">
         <div class="cart-total">
           <span>Total</span>
           <span class="total-price" id="totalPrice">Rp 0</span>
         </div>
-        <button class="checkout-btn" onclick="checkout()">💰 Pesan via Telegram</button>
+        <button class="checkout-btn" onclick="checkout()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+          Pesan via Telegram
+        </button>
       </div>
     </div>
 
-    <!-- Order Modal (Input nomor) -->
+    <!-- ========== ORDER MODAL ========== -->
     <div class="modal-overlay" id="orderModal" style="display:none;">
       <div class="modal">
-        <h2>📝 Konfirmasi Pesanan</h2>
+        <div class="modal-icon">📝</div>
+        <h2>Konfirmasi Pesanan</h2>
+        <p class="modal-desc">Masukkan nomor HP atau ID pelanggan</p>
         <div class="modal-body">
-          <label for="nomorInput">Nomor HP / ID Pelanggan:</label>
-          <input type="text" id="nomorInput" placeholder="08xxxxxxxxxx">
+          <input type="text" id="nomorInput" placeholder="08xxxxxxxxxx" inputmode="numeric">
           <div class="order-summary" id="orderSummary"></div>
         </div>
         <div class="modal-actions">
           <button class="btn-cancel" onclick="closeModal()">Batal</button>
-          <button class="btn-confirm" onclick="confirmOrder()">✅ Kirim Pesanan</button>
+          <button class="btn-confirm" onclick="confirmOrder()">Kirim Pesanan</button>
         </div>
       </div>
     </div>
 
-    <!-- Success Modal -->
+    <!-- ========== SUCCESS MODAL ========== -->
     <div class="modal-overlay" id="successModal" style="display:none;">
       <div class="modal success-modal">
-        <span class="success-icon">✅</span>
+        <div class="success-checkmark">
+          <svg width="56" height="56" viewBox="0 0 56 56" fill="none"><circle cx="28" cy="28" r="28" fill="#2ecc71"/><path d="M16 28l8 8 16-16" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
         <h2>Pesanan Terkirim!</h2>
-        <p>Pesanan kamu sudah dikirim ke admin. Tunggu konfirmasi ya! 🙏</p>
+        <p>Pesanan kamu sudah dikirim ke admin. Tunggu konfirmasi ya 🙏</p>
         <button class="btn-confirm" onclick="closeSuccess()">OK</button>
+      </div>
+    </div>
+
+    <!-- ========== ABOUT MODAL ========== -->
+    <div class="modal-overlay" id="aboutModal" style="display:none;">
+      <div class="modal">
+        <div class="modal-icon">🏪</div>
+        <h2>Tentang KedekuStore</h2>
+        <div class="about-content">
+          <p>KedekuStore adalah toko digital yang menyediakan layanan pulsa, token listrik, paket data, dan voucher digital.</p>
+          <div class="about-divider"></div>
+          <div class="about-info">
+            <span class="about-label">Versi</span>
+            <span>2.0.0</span>
+          </div>
+          <div class="about-info">
+            <span class="about-label">Developer</span>
+            <span>@abdrrahmenz</span>
+          </div>
+        </div>
+        <button class="btn-confirm" onclick="document.getElementById('aboutModal').style.display='none'">Tutup</button>
       </div>
     </div>
 

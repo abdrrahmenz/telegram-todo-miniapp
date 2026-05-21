@@ -2,10 +2,12 @@
 // Telegram Web App Init
 // ========================
 const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
+try {
+  tg.ready();
+  tg.expand();
+} catch (e) {}
 
-// Set theme colors
+// Theme mapping
 const root = document.documentElement;
 if (tg.themeParams) {
   const map = {
@@ -21,59 +23,81 @@ if (tg.themeParams) {
   }
 }
 
+// ========================
 // User info
+// ========================
 const user = tg.initDataUnsafe?.user;
-const userInfoEl = document.getElementById('userInfo');
+const userGreetingEl = document.getElementById('userGreeting');
+const profileNameEl = document.getElementById('profileName');
+const profileIdEl = document.getElementById('profileId');
+const profileAvatarEl = document.getElementById('profileAvatar');
+
 if (user) {
-  userInfoEl.textContent = `Halo, ${user.first_name}! 👋`;
+  userGreetingEl.textContent = `Halo, ${user.first_name}! 👋`;
+  profileNameEl.textContent = `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}`;
+  profileIdEl.textContent = `Telegram ID: ${user.id}`;
+  profileAvatarEl.textContent = user.first_name?.charAt(0)?.toUpperCase() || '👤';
 } else {
-  userInfoEl.textContent = 'Mode preview (buka dari Telegram)';
+  userGreetingEl.textContent = 'Mode preview (buka dari Telegram)';
+  profileNameEl.textContent = 'Preview User';
+  profileIdEl.textContent = 'Telegram ID: -';
+  profileAvatarEl.textContent = 'P';
 }
 
 function haptic(style = 'light') {
   try { tg.HapticFeedback.impactOccurred(style); } catch (e) {}
 }
 
+function notify(message) {
+  try { tg.showAlert(message); } catch (e) { alert(message); }
+}
+
+function confirmDialog(message, cb) {
+  try {
+    tg.showConfirm(message, cb);
+  } catch (e) {
+    cb(window.confirm(message));
+  }
+}
+
 // ========================
 // Product Data
 // ========================
 const PRODUCTS = [
-  // Pulsa
-  { id: 1,  name: 'Pulsa Telkomsel 5.000',  cat: 'pulsa',  icon: '📱', price: 6000,   desc: 'Masa aktif 7 hari' },
-  { id: 2,  name: 'Pulsa Telkomsel 10.000', cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
-  { id: 3,  name: 'Pulsa Telkomsel 25.000', cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
-  { id: 4,  name: 'Pulsa Telkomsel 50.000', cat: 'pulsa',  icon: '📱', price: 50500,  desc: 'Masa aktif 30 hari' },
-  { id: 5,  name: 'Pulsa XL 10.000',        cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
-  { id: 6,  name: 'Pulsa XL 25.000',        cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
-  { id: 7,  name: 'Pulsa Indosat 10.000',   cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
-  { id: 8,  name: 'Pulsa Indosat 25.000',   cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
-  // Token Listrik
-  { id: 10, name: 'Token PLN 20.000',       cat: 'token',  icon: '⚡', price: 21500,  desc: 'Token listrik prabayar' },
-  { id: 11, name: 'Token PLN 50.000',       cat: 'token',  icon: '⚡', price: 51500,  desc: 'Token listrik prabayar' },
-  { id: 12, name: 'Token PLN 100.000',      cat: 'token',  icon: '⚡', price: 101500, desc: 'Token listrik prabayar' },
-  // Paket Data
-  { id: 20, name: 'Paket 1GB / 30 Hari',    cat: 'paket',  icon: '📦', price: 15000,  desc: 'Semua operator' },
-  { id: 21, name: 'Paket 3GB / 30 Hari',    cat: 'paket',  icon: '📦', price: 30000,  desc: 'Semua operator' },
-  { id: 22, name: 'Paket 5GB / 30 Hari',    cat: 'paket',  icon: '📦', price: 45000,  desc: 'Semua operator' },
-  { id: 23, name: 'Paket 10GB / 30 Hari',   cat: 'paket',  icon: '📦', price: 70000,  desc: 'Semua operator' },
-  // Barang
-  { id: 30, name: 'Voucher Google Play 50rb', cat: 'barang', icon: '🎮', price: 52000,  desc: 'Gift card Google Play' },
-  { id: 31, name: 'Voucher Google Play 100rb',cat: 'barang', icon: '🎮', price: 102000, desc: 'Gift card Google Play' },
-  { id: 32, name: 'Voucher Google Play 150rb',cat: 'barang', icon: '🎮', price: 150000, desc: 'Gift card Google Play' },
-  { id: 33, name: 'Saldo GoPay 50.000',     cat: 'barang', icon: '💰', price: 52000,  desc: 'Top up saldo GoPay' },
-  { id: 34, name: 'Saldo GoPay 100.000',    cat: 'barang', icon: '💰', price: 102000, desc: 'Top up saldo GoPay' },
-  { id: 35, name: 'Saldo OVO 50.000',       cat: 'barang', icon: '💜', price: 52000,  desc: 'Top up saldo OVO' },
-  { id: 36, name: 'Saldo OVO 100.000',      cat: 'barang', icon: '💜', price: 102000, desc: 'Top up saldo OVO' },
-  { id: 37, name: 'Saldo DANA 50.000',      cat: 'barang', icon: '💙', price: 52000,  desc: 'Top up saldo DANA' },
-  { id: 38, name: 'Saldo DANA 100.000',     cat: 'barang', icon: '💙', price: 102000, desc: 'Top up saldo DANA' },
+  { id: 1,  name: 'Pulsa Telkomsel 5.000',   cat: 'pulsa',  icon: '📱', price: 6000,   desc: 'Masa aktif 7 hari' },
+  { id: 2,  name: 'Pulsa Telkomsel 10.000',  cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
+  { id: 3,  name: 'Pulsa Telkomsel 25.000',  cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
+  { id: 4,  name: 'Pulsa Telkomsel 50.000',  cat: 'pulsa',  icon: '📱', price: 50500,  desc: 'Masa aktif 30 hari' },
+  { id: 5,  name: 'Pulsa XL 10.000',         cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
+  { id: 6,  name: 'Pulsa XL 25.000',         cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
+  { id: 7,  name: 'Pulsa Indosat 10.000',    cat: 'pulsa',  icon: '📱', price: 11000,  desc: 'Masa aktif 7 hari' },
+  { id: 8,  name: 'Pulsa Indosat 25.000',    cat: 'pulsa',  icon: '📱', price: 26000,  desc: 'Masa aktif 30 hari' },
+  { id: 10, name: 'Token PLN 20.000',        cat: 'token',  icon: '⚡', price: 21500,  desc: 'Token listrik prabayar' },
+  { id: 11, name: 'Token PLN 50.000',        cat: 'token',  icon: '⚡', price: 51500,  desc: 'Token listrik prabayar' },
+  { id: 12, name: 'Token PLN 100.000',       cat: 'token',  icon: '⚡', price: 101500, desc: 'Token listrik prabayar' },
+  { id: 20, name: 'Paket 1GB / 30 Hari',     cat: 'paket',  icon: '📦', price: 15000,  desc: 'Semua operator' },
+  { id: 21, name: 'Paket 3GB / 30 Hari',     cat: 'paket',  icon: '📦', price: 30000,  desc: 'Semua operator' },
+  { id: 22, name: 'Paket 5GB / 30 Hari',     cat: 'paket',  icon: '📦', price: 45000,  desc: 'Semua operator' },
+  { id: 23, name: 'Paket 10GB / 30 Hari',    cat: 'paket',  icon: '📦', price: 70000,  desc: 'Semua operator' },
+  { id: 30, name: 'Voucher Google Play 50rb',  cat: 'barang', icon: '🎮', price: 52000,  desc: 'Gift card Google Play' },
+  { id: 31, name: 'Voucher Google Play 100rb', cat: 'barang', icon: '🎮', price: 102000, desc: 'Gift card Google Play' },
+  { id: 32, name: 'Voucher Google Play 150rb', cat: 'barang', icon: '🎮', price: 150000, desc: 'Gift card Google Play' },
+  { id: 33, name: 'Saldo GoPay 50.000',      cat: 'barang', icon: '💰', price: 52000,  desc: 'Top up saldo GoPay' },
+  { id: 34, name: 'Saldo GoPay 100.000',     cat: 'barang', icon: '💰', price: 102000, desc: 'Top up saldo GoPay' },
+  { id: 35, name: 'Saldo OVO 50.000',        cat: 'barang', icon: '💜', price: 52000,  desc: 'Top up saldo OVO' },
+  { id: 36, name: 'Saldo OVO 100.000',       cat: 'barang', icon: '💜', price: 102000, desc: 'Top up saldo OVO' },
+  { id: 37, name: 'Saldo DANA 50.000',       cat: 'barang', icon: '💙', price: 52000,  desc: 'Top up saldo DANA' },
+  { id: 38, name: 'Saldo DANA 100.000',      cat: 'barang', icon: '💙', price: 102000, desc: 'Top up saldo DANA' },
 ];
 
 // ========================
 // State
 // ========================
 let cart = JSON.parse(localStorage.getItem('kedeku_cart') || '[]');
+let orderHistory = JSON.parse(localStorage.getItem('kedeku_history') || '[]');
 let currentCat = 'all';
 let searchQuery = '';
+let currentTab = 'Store';
 
 const productGrid = document.getElementById('productGrid');
 const emptyState = document.getElementById('emptyState');
@@ -83,22 +107,85 @@ const cartEmpty = document.getElementById('cartEmpty');
 const cartFooter = document.getElementById('cartFooter');
 const totalPrice = document.getElementById('totalPrice');
 const cartOverlay = document.getElementById('cartOverlay');
-const cartSidebar = document.getElementById('cartSidebar');
+const cartSheet = document.getElementById('cartSheet');
+const cartCount = document.getElementById('cartCount');
+const historyList = document.getElementById('historyList');
+const historyEmpty = document.getElementById('historyEmpty');
+const statOrders = document.getElementById('statOrders');
+const statSpent = document.getElementById('statSpent');
 
 // ========================
-// Format Rupiah
+// Helpers
 // ========================
 function formatRp(num) {
-  return 'Rp ' + num.toLocaleString('id-ID');
+  return 'Rp ' + Number(num).toLocaleString('id-ID');
+}
+
+function formatDateTime(dateString) {
+  return new Date(dateString).toLocaleString('id-ID', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function saveCart() {
+  localStorage.setItem('kedeku_cart', JSON.stringify(cart));
+  updateBadge();
+}
+
+function saveHistory() {
+  localStorage.setItem('kedeku_history', JSON.stringify(orderHistory));
+}
+
+function getCartTotal() {
+  return cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+}
+
+function getTotalSpent() {
+  return orderHistory.reduce((sum, order) => sum + order.total, 0);
+}
+
+function updateBadge() {
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  cartBadge.textContent = totalItems;
+  cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
+  cartCount.textContent = `${totalItems} item`;
 }
 
 // ========================
-// Render Products
+// Tabs
+// ========================
+function switchTab(tabName) {
+  currentTab = tabName;
+
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tabName);
+  });
+
+  const target = document.getElementById(`tab${tabName}`);
+  if (target) target.classList.add('active');
+
+  if (tabName === 'History') renderHistory();
+  if (tabName === 'Profile') renderProfile();
+
+  haptic('light');
+}
+
+// ========================
+// Product rendering
 // ========================
 function getFilteredProducts() {
   return PRODUCTS.filter(p => {
     const catMatch = currentCat === 'all' || p.cat === currentCat;
-    const searchMatch = !searchQuery || p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const query = searchQuery.trim().toLowerCase();
+    const searchMatch = !query || p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query);
     return catMatch && searchMatch;
   });
 }
@@ -122,21 +209,20 @@ function renderProducts() {
         <div class="product-icon">${p.icon}</div>
         <div class="product-name">${escapeHtml(p.name)}</div>
         <div class="product-desc">${escapeHtml(p.desc)}</div>
-        <div class="product-price">${formatRp(p.price)}</div>
-        <button class="add-btn ${inCart ? 'added' : ''}" onclick="addToCart(${p.id})">
-          ${inCart ? '✓ Ditambahkan' : '🛒 Tambah'}
-        </button>
+        <div class="product-bottom">
+          <div class="product-price">${formatRp(p.price)}</div>
+          <button class="add-btn ${inCart ? 'added' : ''}" onclick="addToCart(${p.id})" aria-label="Tambah produk">
+            ${inCart ? '✓' : '+'}
+          </button>
+        </div>
       </div>
     `;
   }).join('');
 }
 
-// ========================
-// Category & Search
-// ========================
 function setCategory(cat) {
   currentCat = cat;
-  document.querySelectorAll('.tab').forEach(t => {
+  document.querySelectorAll('.cat-pill').forEach(t => {
     t.classList.toggle('active', t.dataset.cat === cat);
   });
   renderProducts();
@@ -149,7 +235,7 @@ function filterProducts() {
 }
 
 // ========================
-// Cart Functions
+// Cart
 // ========================
 function addToCart(productId) {
   const product = PRODUCTS.find(p => p.id === productId);
@@ -191,25 +277,27 @@ function changeQty(productId, delta) {
   haptic('light');
 }
 
-function saveCart() {
-  localStorage.setItem('kedeku_cart', JSON.stringify(cart));
-  updateBadge();
+function clearCart() {
+  if (cart.length === 0) {
+    notify('Keranjang sudah kosong.');
+    return;
+  }
+
+  confirmDialog('Kosongkan semua isi keranjang?', ok => {
+    if (!ok) return;
+    cart = [];
+    saveCart();
+    renderProducts();
+    renderCart();
+    haptic('medium');
+    notify('Keranjang berhasil dikosongkan.');
+  });
 }
 
-function updateBadge() {
-  const totalItems = cart.reduce((s, c) => s + c.qty, 0);
-  cartBadge.textContent = totalItems;
-  cartBadge.style.display = totalItems > 0 ? 'flex' : 'none';
-}
-
-function getCartTotal() {
-  return cart.reduce((s, c) => s + c.price * c.qty, 0);
-}
-
-// ========================
-// Render Cart
-// ========================
 function renderCart() {
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  cartCount.textContent = `${totalItems} item`;
+
   if (cart.length === 0) {
     cartItems.innerHTML = '';
     cartEmpty.style.display = 'flex';
@@ -239,31 +327,29 @@ function renderCart() {
   totalPrice.textContent = formatRp(getCartTotal());
 }
 
-// ========================
-// Cart Sidebar Toggle
-// ========================
 function toggleCart() {
-  const isOpen = cartSidebar.classList.contains('open');
+  const isOpen = cartSheet.classList.contains('open');
   if (isOpen) {
-    cartSidebar.classList.remove('open');
+    cartSheet.classList.remove('open');
     cartOverlay.classList.remove('open');
+    document.body.classList.remove('no-scroll');
   } else {
-    cartSidebar.classList.add('open');
+    cartSheet.classList.add('open');
     cartOverlay.classList.add('open');
+    document.body.classList.add('no-scroll');
     renderCart();
   }
   haptic('light');
 }
 
 // ========================
-// Checkout Flow
+// Checkout & history
 // ========================
 function checkout() {
   if (cart.length === 0) return;
 
   toggleCart();
 
-  // Build order summary
   const summary = cart.map(item =>
     `<div class="summary-item">
       <span>${item.icon} ${escapeHtml(item.name)} x${item.qty}</span>
@@ -282,7 +368,7 @@ function checkout() {
   document.getElementById('orderModal').style.display = 'flex';
   haptic('light');
 
-  setTimeout(() => document.getElementById('nomorInput').focus(), 300);
+  setTimeout(() => document.getElementById('nomorInput').focus(), 200);
 }
 
 function closeModal() {
@@ -290,40 +376,67 @@ function closeModal() {
 }
 
 function confirmOrder() {
-  const nomor = document.getElementById('nomorInput').value.trim();
+  const nomorInput = document.getElementById('nomorInput');
+  const nomor = nomorInput.value.trim();
+
   if (!nomor) {
     haptic('error');
-    document.getElementById('nomorInput').style.borderColor = '#ff4757';
-    setTimeout(() => document.getElementById('nomorInput').style.borderColor = '', 1500);
+    nomorInput.style.borderColor = '#ff6b6b';
+    setTimeout(() => { nomorInput.style.borderColor = ''; }, 1200);
     return;
   }
 
+  const total = getCartTotal();
+  const now = new Date();
+  const orderId = `ORD-${now.getTime().toString().slice(-6)}`;
+
+  const order = {
+    id: orderId,
+    nomor,
+    total,
+    date: now.toISOString(),
+    status: 'pending',
+    items: cart.map(item => ({
+      id: item.id,
+      name: item.name,
+      icon: item.icon,
+      qty: item.qty,
+      price: item.price,
+    }))
+  };
+
+  orderHistory.unshift(order);
+  saveHistory();
+
   closeModal();
 
-  // Build pesan untuk admin
   const items = cart.map(i => `${i.icon} ${i.name} x${i.qty} = ${formatRp(i.price * i.qty)}`).join('\n');
-  const total = formatRp(getCartTotal());
-  const userName = user ? user.first_name : 'Unknown';
+  const userName = user ? `${user.first_name}${user.last_name ? ' ' + user.last_name : ''}` : 'Unknown';
   const userId = user ? user.id : '-';
 
   const message =
     `🛒 *PESANAN BARU*\n\n` +
+    `🆔 Order ID: ${orderId}\n` +
     `👤 Nama: ${userName}\n` +
     `🆔 User ID: ${userId}\n` +
     `📱 Nomor: ${nomor}\n\n` +
     `📦 Detail Pesanan:\n${items}\n\n` +
-    `💰 *Total: ${total}*\n\n` +
-    `⏰ ${new Date().toLocaleString('id-ID')}`;
+    `💰 *Total: ${formatRp(total)}*\n\n` +
+    `⏰ ${now.toLocaleString('id-ID')}`;
 
-  // Kirim ke Telegram via Web App
-  tg.sendData(message);
+  try {
+    tg.sendData(message);
+  } catch (e) {
+    console.warn('tg.sendData failed in preview mode', e);
+  }
 
-  // Clear cart
   cart = [];
   saveCart();
   renderProducts();
+  renderCart();
+  renderHistory();
+  renderProfile();
 
-  // Show success
   document.getElementById('successModal').style.display = 'flex';
   haptic('success');
 }
@@ -332,13 +445,63 @@ function closeSuccess() {
   document.getElementById('successModal').style.display = 'none';
 }
 
-// ========================
-// Utility
-// ========================
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+function renderHistory() {
+  if (!orderHistory.length) {
+    historyList.style.display = 'none';
+    historyEmpty.style.display = 'block';
+    return;
+  }
+
+  historyList.style.display = 'flex';
+  historyEmpty.style.display = 'none';
+
+  historyList.innerHTML = orderHistory.map(order => `
+    <div class="history-card">
+      <div class="history-card-header">
+        <span class="history-order-id">${order.id}</span>
+        <span class="history-status ${order.status}">${order.status === 'pending' ? 'Diproses' : 'Selesai'}</span>
+      </div>
+      <div class="history-items">
+        ${order.items.map(item => `
+          <div class="history-item-row">
+            <span>${item.icon} ${escapeHtml(item.name)} x${item.qty}</span>
+            <span>${formatRp(item.price * item.qty)}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="history-footer">
+        <div class="history-date">${formatDateTime(order.date)}</div>
+        <div class="history-total">${formatRp(order.total)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function clearHistory() {
+  if (!orderHistory.length) {
+    notify('Riwayat masih kosong.');
+    return;
+  }
+
+  confirmDialog('Hapus semua riwayat pesanan?', ok => {
+    if (!ok) return;
+    orderHistory = [];
+    saveHistory();
+    renderHistory();
+    renderProfile();
+    haptic('medium');
+    notify('Riwayat berhasil dihapus.');
+  });
+}
+
+function renderProfile() {
+  statOrders.textContent = String(orderHistory.length);
+  statSpent.textContent = formatRp(getTotalSpent());
+}
+
+function showAbout() {
+  document.getElementById('aboutModal').style.display = 'flex';
+  haptic('light');
 }
 
 // ========================
@@ -346,3 +509,7 @@ function escapeHtml(text) {
 // ========================
 updateBadge();
 renderProducts();
+renderCart();
+renderHistory();
+renderProfile();
+switchTab(currentTab);
