@@ -5,79 +5,113 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>KedekuStore</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app">
-
-    <!-- ========== STORE TAB ========== -->
     <div class="tab-content active" id="tabStore">
-
-      <!-- Header -->
-      <div class="header">
+      <header class="header">
         <div class="header-top">
           <div>
+            <p class="top-label">Digital Top Up Store</p>
             <h1 class="header-title">KedekuStore</h1>
             <p class="user-greeting" id="userGreeting">Selamat datang! 👋</p>
           </div>
-          <button class="cart-btn" id="cartBtn" onclick="toggleCart()">
+          <button class="cart-btn" id="cartBtn" onclick="toggleCart()" aria-label="Buka keranjang">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
             <span class="cart-badge" id="cartBadge">0</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      <!-- Search -->
-      <div class="search-wrap">
+      <section class="hero-card">
+        <div class="hero-content">
+          <span class="hero-badge">✨ Promo Hari Ini</span>
+          <h2>Top up cepat, tampilan premium, checkout praktis</h2>
+          <p>Beli pulsa, token, paket data, dan voucher digital dalam satu aplikasi.</p>
+          <div class="hero-actions">
+            <button class="hero-btn primary" onclick="scrollToProducts()">Belanja Sekarang</button>
+            <button class="hero-btn secondary" onclick="switchTab('Profile')">Lihat Profil</button>
+          </div>
+        </div>
+        <div class="hero-decoration">
+          <div class="glow one"></div>
+          <div class="glow two"></div>
+          <div class="hero-icon">🛍️</div>
+        </div>
+      </section>
+
+      <section class="quick-stats">
+        <div class="mini-stat-card">
+          <span class="mini-stat-label">Produk</span>
+          <strong id="storeStatProducts">0</strong>
+        </div>
+        <div class="mini-stat-card">
+          <span class="mini-stat-label">Kategori</span>
+          <strong id="storeStatCategories">0</strong>
+        </div>
+        <div class="mini-stat-card accent">
+          <span class="mini-stat-label">Pesanan</span>
+          <strong id="storeStatOrders">0</strong>
+        </div>
+      </section>
+
+      <section class="search-wrap">
         <div class="search-box">
           <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="Cari produk..." oninput="filterProducts()">
+          <input type="text" id="searchInput" placeholder="Cari produk favoritmu..." oninput="filterProducts()">
         </div>
-      </div>
+      </section>
 
-      <!-- Category Pills -->
-      <div class="category-scroll">
-        <button class="cat-pill active" data-cat="all" onclick="setCategory('all')">
-          <span class="cat-emoji">🏪</span> Semua
-        </button>
-        <button class="cat-pill" data-cat="pulsa" onclick="setCategory('pulsa')">
-          <span class="cat-emoji">📱</span> Pulsa
-        </button>
-        <button class="cat-pill" data-cat="token" onclick="setCategory('token')">
-          <span class="cat-emoji">⚡</span> Token
-        </button>
-        <button class="cat-pill" data-cat="paket" onclick="setCategory('paket')">
-          <span class="cat-emoji">📦</span> Paket Data
-        </button>
-        <button class="cat-pill" data-cat="barang" onclick="setCategory('barang')">
-          <span class="cat-emoji">🎮</span> Voucher
-        </button>
-      </div>
+      <section class="section-head">
+        <div>
+          <p class="section-kicker">Kategori</p>
+          <h3>Pilih layanan</h3>
+        </div>
+      </section>
 
-      <!-- Product Grid -->
+      <div class="category-scroll" id="categoryTabs"></div>
+
+      <section class="section-head products-anchor" id="productsSection">
+        <div>
+          <p class="section-kicker">Produk tersedia</p>
+          <h3>Rekomendasi untuk kamu</h3>
+        </div>
+        <span class="section-count" id="productCountLabel">0 produk</span>
+      </section>
+
+      <div class="featured-strip" id="featuredStrip"></div>
       <div class="product-grid" id="productGrid"></div>
 
-      <!-- Empty State -->
       <div class="empty-state" id="emptyState" style="display:none;">
         <div class="empty-illustration">🔍</div>
         <p>Produk tidak ditemukan</p>
-        <span>Coba kata kunci lain</span>
+        <span>Coba kata kunci atau kategori lain</span>
       </div>
     </div>
 
-    <!-- ========== HISTORY TAB ========== -->
     <div class="tab-content" id="tabHistory">
       <div class="page-header">
-        <h1>Riwayat Pesanan</h1>
-        <p class="page-subtitle">Pesanan yang pernah kamu buat</p>
+        <p class="section-kicker">Riwayat transaksi</p>
+        <h1>History Pesanan</h1>
+        <p class="page-subtitle">Semua pembelian yang pernah kamu lakukan akan tampil di sini.</p>
       </div>
 
-      <div class="history-list" id="historyList">
-        <!-- Rendered by JS -->
+      <div class="history-summary-card">
+        <div>
+          <span>Total transaksi</span>
+          <strong id="historySummaryCount">0</strong>
+        </div>
+        <div>
+          <span>Total belanja</span>
+          <strong id="historySummaryTotal">Rp 0</strong>
+        </div>
       </div>
 
+      <div class="history-list" id="historyList"></div>
       <div class="empty-state" id="historyEmpty">
         <div class="empty-illustration">📋</div>
         <p>Belum ada pesanan</p>
@@ -85,10 +119,10 @@
       </div>
     </div>
 
-    <!-- ========== PROFILE TAB ========== -->
     <div class="tab-content" id="tabProfile">
       <div class="profile-card">
         <div class="profile-avatar" id="profileAvatar">👤</div>
+        <div class="profile-badge">Member aktif</div>
         <h2 class="profile-name" id="profileName">User</h2>
         <p class="profile-id" id="profileId">Loading...</p>
       </div>
@@ -105,27 +139,31 @@
       </div>
 
       <div class="profile-menu">
-        <div class="menu-item" onclick="clearHistory()">
+        <button class="menu-item" onclick="openAdminPanel()">
+          <div class="menu-icon">🛠️</div>
+          <span>Admin Produk</span>
+          <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="menu-item" onclick="clearHistory()">
           <div class="menu-icon">🗑️</div>
           <span>Hapus Riwayat</span>
           <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="menu-item" onclick="clearCart()">
+        </button>
+        <button class="menu-item" onclick="clearCart()">
           <div class="menu-icon">🛒</div>
           <span>Kosongkan Keranjang</span>
           <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
-        <div class="menu-item" onclick="showAbout()">
+        </button>
+        <button class="menu-item" onclick="showAbout()">
           <div class="menu-icon">ℹ️</div>
           <span>Tentang Aplikasi</span>
           <svg class="menu-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </div>
+        </button>
       </div>
 
-      <div class="app-version">KedekuStore v2.0</div>
+      <div class="app-version">KedekuStore v2.1</div>
     </div>
 
-    <!-- ========== BOTTOM NAV ========== -->
     <nav class="bottom-nav">
       <button class="nav-item active" data-tab="Store" onclick="switchTab('Store')">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -141,7 +179,6 @@
       </button>
     </nav>
 
-    <!-- ========== CART SLIDE-UP ========== -->
     <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
     <div class="cart-sheet" id="cartSheet">
       <div class="sheet-handle"></div>
@@ -166,7 +203,6 @@
       </div>
     </div>
 
-    <!-- ========== ORDER MODAL ========== -->
     <div class="modal-overlay" id="orderModal" style="display:none;">
       <div class="modal">
         <div class="modal-icon">📝</div>
@@ -183,7 +219,6 @@
       </div>
     </div>
 
-    <!-- ========== SUCCESS MODAL ========== -->
     <div class="modal-overlay" id="successModal" style="display:none;">
       <div class="modal success-modal">
         <div class="success-checkmark">
@@ -195,17 +230,16 @@
       </div>
     </div>
 
-    <!-- ========== ABOUT MODAL ========== -->
     <div class="modal-overlay" id="aboutModal" style="display:none;">
       <div class="modal">
         <div class="modal-icon">🏪</div>
         <h2>Tentang KedekuStore</h2>
         <div class="about-content">
-          <p>KedekuStore adalah toko digital yang menyediakan layanan pulsa, token listrik, paket data, dan voucher digital.</p>
+          <p>KedekuStore adalah toko digital yang menyediakan layanan pulsa, token listrik, paket data, voucher digital, dengan pengalaman mini app yang lebih modern.</p>
           <div class="about-divider"></div>
           <div class="about-info">
             <span class="about-label">Versi</span>
-            <span>2.0.0</span>
+            <span>2.1.0</span>
           </div>
           <div class="about-info">
             <span class="about-label">Developer</span>
@@ -216,6 +250,63 @@
       </div>
     </div>
 
+    <div class="modal-overlay" id="adminModal" style="display:none;">
+      <div class="modal modal-large admin-modal">
+        <div class="admin-head">
+          <div>
+            <p class="section-kicker">Admin panel</p>
+            <h2>Kelola Produk</h2>
+          </div>
+          <button class="icon-close-btn" onclick="closeAdminPanel()">✕</button>
+        </div>
+
+        <div class="admin-form-grid">
+          <div class="admin-input-group">
+            <label for="adminName">Nama produk</label>
+            <input id="adminName" type="text" placeholder="Contoh: Pulsa Telkomsel 15.000">
+          </div>
+          <div class="admin-input-group">
+            <label for="adminPrice">Harga</label>
+            <input id="adminPrice" type="number" placeholder="15000">
+          </div>
+          <div class="admin-input-group">
+            <label for="adminCategory">Kategori</label>
+            <select id="adminCategory">
+              <option value="pulsa">Pulsa</option>
+              <option value="token">Token</option>
+              <option value="paket">Paket Data</option>
+              <option value="barang">Voucher / Barang</option>
+            </select>
+          </div>
+          <div class="admin-input-group">
+            <label for="adminIcon">Icon</label>
+            <input id="adminIcon" type="text" placeholder="📱">
+          </div>
+          <div class="admin-input-group full">
+            <label for="adminDesc">Deskripsi</label>
+            <input id="adminDesc" type="text" placeholder="Deskripsi singkat produk">
+          </div>
+          <div class="admin-input-group">
+            <label for="adminBadge">Badge</label>
+            <input id="adminBadge" type="text" placeholder="Best Seller / Promo">
+          </div>
+        </div>
+
+        <input type="hidden" id="adminEditId">
+
+        <div class="admin-actions-row">
+          <button class="btn-cancel" onclick="resetAdminForm()">Reset</button>
+          <button class="btn-confirm" onclick="saveAdminProduct()">Simpan Produk</button>
+        </div>
+
+        <div class="admin-toolbar">
+          <h3>Daftar Produk</h3>
+          <button class="soft-btn" onclick="resetProductsToDefault()">Reset Default</button>
+        </div>
+
+        <div class="admin-product-list" id="adminProductList"></div>
+      </div>
+    </div>
   </div>
 
   <script src="app.js"></script>
